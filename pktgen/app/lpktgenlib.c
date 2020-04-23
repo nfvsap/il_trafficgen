@@ -214,6 +214,8 @@ pktgen_set(lua_State *L) {
 				     single_set_tx_count(info, value);
 			     else if (!strcasecmp(what, "size"))
 				     single_set_pkt_size(info, value);
+			     else if (!strcasecmp(what, "pps"))
+				     pktgen_set_port_pps(info, value);
 			     else if (!strcasecmp(what, "rate"))
 				     single_set_tx_rate(info, luaL_checkstring(L, 3));
 			     else if (!strcasecmp(what, "burst"))

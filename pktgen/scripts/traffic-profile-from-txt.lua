@@ -1,11 +1,12 @@
 -- Traffic pattern from a file
--- Specify the file n main() to make it downlink or uplink
 
 package.path = package.path ..";?.lua;test/?.lua;app/?.lua;../?.lua"
 
 require "Pktgen";
 
-local time_step = 5;		-- seconds
+-- Specify variable to make it downlink or uplink
+link = "downlink";
+time_step = 5;		-- seconds
 
 sendport = 0;
 total_time = 0;
@@ -63,7 +64,7 @@ end
 function main()
 	local sending = 0;
 
-	local file = '/opt/il_trafficgen/pktgen/scripts/downlink.txt';
+	local file = '/opt/il_trafficgen/pktgen/scripts/'..link..'.txt';
 	local lines = lines_from(file);
 	--for k,v in pairs(lines) do
 	--	print('line[' .. k .. ']', v);
@@ -95,6 +96,13 @@ function main()
 				pktgen.start(sendport);
 				sending = 1;
 			end
+
+			-- write pps in file
+			file = io.open("/opt/il_trafficgen/pktgen/scripts/tmp-"..link..".txt", "w");
+			file:write("timestamp: ", os.time(), '\n', "pps: ", v.pps, '\n');
+			--os.time(os.date("!*t"))
+			file:close();
+			os.rename("/opt/il_trafficgen/pktgen/scripts/tmp-"..link..".txt", "/opt/il_trafficgen/pktgen/scripts/pps-"..link..".txt");
 
 			-- Sleep until we need to move to the next pps value and timeout
 			sleep(v.timo);

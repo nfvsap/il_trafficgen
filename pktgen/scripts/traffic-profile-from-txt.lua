@@ -44,7 +44,7 @@ function lines_from(file)
 			pkt_size = tonumber(splitted[5]);
 		end
 		if count > 5 and count < 294 then
-			lines[#lines + 1] = line;
+			lines[#lines + 1] = tonumber(line) * 0.43;
 		end
 	end
 	return lines
@@ -83,9 +83,18 @@ function main()
 	sleep(1);
 
 	total_time = 0;
+	loop = 0;
+	-- set this with the index of traffic to start the first time, -1 if you want to start from beginning
+	offset = -1;
 	while true do
+		loop = loop + 1;
 		-- v is the table to values created by the Set(x,y) function
-		for _,v in pairs(trlst) do
+		for idx,v in pairs(trlst) do
+			if loop == 1 then
+				if idx < offset then
+					goto continue
+				end
+			end
 			--printf("   PPS %d for %d seconds\n", v.pps, v.timo);
 
 			-- Set the pps to the new value
@@ -107,6 +116,8 @@ function main()
 			-- Sleep until we need to move to the next pps value and timeout
 			sleep(v.timo);
 			total_time = total_time + v.timo;
+
+			::continue::
 		end
 	end
 
